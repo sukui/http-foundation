@@ -4,7 +4,7 @@ namespace ZanPHP\HttpFoundation\Request;
 
 use swoole_http_request as SwooleHttpRequest;
 
-use ZanPHP\Contracts\Network\Request as RequestContract;
+use ZanPHP\Contracts\Http\HttpRequest as RequestContract;
 use ZanPHP\Contracts\Support\Arrayable;
 use ZanPHP\HttpFoundation\Bag\ParameterBag;
 use ZanPHP\Support\Arr;
