@@ -1,9 +1,9 @@
 <?php
 
-use Zan\Framework\Network\Http\Cookie;
 use ZanPHP\Coroutine\Signal;
 use ZanPHP\Coroutine\SysCall;
 use ZanPHP\Coroutine\Task;
+use ZanPHP\HttpFoundation\Cookie;
 
 
 function getCookieHandler()
