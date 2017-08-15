@@ -35,6 +35,4 @@ return [
     \ZanPHP\HttpFoundation\Response\Response::class => "Zan\\Framework\\Network\\Http\\Response\\Response",
     \ZanPHP\HttpFoundation\Response\ResponseHeaderBag::class => "Zan\\Framework\\Network\\Http\\Response\\ResponseHeaderBag",
 
-    \ZanPHP\HttpFoundation\Cookie::class => "\\Zan\\Framework\\Network\\Http\\Cookie",
-
 ];
