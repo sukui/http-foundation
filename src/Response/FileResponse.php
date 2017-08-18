@@ -8,7 +8,7 @@ use swoole_http_response as SwooleHttpResponse;
 use ZanPHP\Exception\System\InvalidArgumentException;
 use ZanPHP\HttpFoundation\Exception\FileUploadFailException;
 
-class FileUploaderResponse extends BaseResponse implements Response
+class FileResponse extends BaseResponse implements Response
 {
     use ResponseTrait;
 
