@@ -17,7 +17,7 @@ class ServerUnavailableHandler implements ExceptionHandler
         }
 
         $errMsg = $e->getMessage();
-        $errorPagePath = getenv("path.root") . '/vendor/zanphp/zan/src/Foundation/View/Pages/Error.php';
+        $errorPagePath = getenv("path.root") . '/vendor/zanphp/http-view/src/Pages/Error.php';
         $errorPage = require $errorPagePath;
 
         $request = (yield getContext('request'));
