@@ -217,19 +217,25 @@ class UploadedFile extends File
     {
         if ($this->isValid()) {
             if ($this->test) {
-                return parent::move($directory, $name);
+                yield parent::move($directory, $name);
+                return;
             }
 
             $target = $this->getTargetFile($directory, $name);
 
+            /*
             if (!@move_uploaded_file($this->getPathname(), $target)) {
                 $error = error_get_last();
                 throw new FileException(sprintf('Could not move the file "%s" to "%s" (%s)', $this->getPathname(), $target, strip_tags($error['message'])));
             }
+            */
+
+            yield $this->move_upload_file($this->getPathname(), $target);
 
             @chmod($target, 0666 & ~umask());
 
-            return $target;
+            yield $target;
+            return;
         }
 
         throw new FileException($this->getErrorMessage());
@@ -289,5 +295,50 @@ class UploadedFile extends File
         $message = isset($errors[$errorCode]) ? $errors[$errorCode] : 'The file "%s" was not uploaded due to an unknown error.';
 
         return sprintf($message, $this->getClientOriginalName(), $maxFilesize);
+    }
+
+    /**
+     * 异步复制文件
+     * @param $src
+     * @param $dst
+     */
+    private function move_upload_file($src, $dst)
+    {
+        return callcc(function(callable $resolve, $task) use($src, $dst) {
+            $chunk = 1024 * 1024;
+            $offset = 0;
+            $fileSize = filesize($src);
+            $n = (int)ceil($fileSize / $chunk);
+            $stopped = false;
+
+            $r = swoole_async_read($src, function($_, $content) use($src, $dst, $resolve, &$offset, &$n, &$stopped) {
+                $readSize = strlen($content);
+                $continue = ($readSize !== 0) && !$stopped;
+
+                if ($continue) {
+                    $r = swoole_async_write($dst, $content, $offset, function($_, $writeSize) use($resolve, $offset, $readSize, &$n, &$stopped) {
+                        // assert($readSize === $writeSize); // 分块全部写入
+                        if (--$n === 0) {
+                            $stopped = true;
+                            $resolve(null);
+                        }
+                    });
+
+                    if (!$r) {
+                        if (!$stopped) {
+                            $resolve(null, new FileException("Failed to write $src"));
+                            $stopped = true;
+                        }
+                    }
+                }
+                $offset += $readSize;
+                return $continue ;
+            });
+
+            if (!$r) {
+                $stopped = true;
+                $resolve(null, new FileException("Failed to read $src"));
+            }
+        });
     }
 }
