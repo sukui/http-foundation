@@ -24,6 +24,9 @@ class FileUploaderResponse extends BaseResponse implements Response
         if (!$filepath || !is_readable($filepath)) {
             throw new InvalidArgumentException("Invalid uploading file : $filepath");
         }
+
+        // no-replace
+        $this->headers->set("Content-Type", mime_content_type($filepath));
         if (!$swooleHttpResponse->sendfile($this->content)) {
             throw new FileUploadFailException("Failed to upload file: $filepath");
         }
