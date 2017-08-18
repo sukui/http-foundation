@@ -26,7 +26,8 @@ class FileUploaderResponse extends BaseResponse implements Response
         }
 
         // no-replace
-        $this->headers->set("Content-Type", mime_content_type($filepath));
+        // $this->headers->set("Content-Type", mime_content_type($filepath));
+        $swooleHttpResponse->header("Content-Type", mime_content_type($filepath));
         if (!$swooleHttpResponse->sendfile($this->content)) {
             throw new FileUploadFailException("Failed to upload file: $filepath");
         }
