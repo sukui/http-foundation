@@ -1,63 +1,146 @@
 <?php
 
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien@symfony.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace ZanPHP\HttpFoundation\Bag;
 
-class FileBag
+use ZanPHP\HttpFoundation\File\UploadedFile;
+
+
+/**
+ * FileBag is a container for uploaded files.
+ *
+ * @author Fabien Potencier <fabien@symfony.com>
+ * @author Bulat Shakirzyanov <mallluhuct@gmail.com>
+ */
+class FileBag extends ParameterBag
 {
-    private $name;
+    private static $fileKeys = array('error', 'name', 'size', 'tmp_name', 'type');
 
-    private $type;
-
-    private $tmpName;
-
-    private $error;
-
-    private $size;
-
-    public function __construct(array $files = array())
+    /**
+     * Constructor.
+     *
+     * @param array $parameters An array of HTTP files
+     */
+    public function __construct(array $parameters = array())
     {
-        $this->init($files);
+        $this->replace($parameters);
     }
 
-    private function init($files)
+    /**
+     * {@inheritdoc}
+     */
+    public function replace(array $files = array())
     {
-        if ([] == $files) {
-            return;
+        $this->parameters = array();
+        $this->add($files);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function set($key, $value)
+    {
+        if (!is_array($value) && !$value instanceof UploadedFile) {
+            throw new \InvalidArgumentException('An uploaded file must be an array or an instance of UploadedFile.');
         }
-        $this->name = $files['file']['name'];
-        $this->type = $files['file']['type'];
-        $this->tmpName = $files['file']['tmp_name'];
-        $this->error = $files['file']['error'];
-        $this->size = $files['file']['size'];
+
+        parent::set($key, $this->convertFileInformation($value));
     }
 
-    public function getName()
+    /**
+     * {@inheritdoc}
+     */
+    public function add(array $files = array())
     {
-        return $this->name;
+        foreach ($files as $key => $file) {
+            $this->set($key, $file);
+        }
     }
 
-    public function getType()
+    /**
+     * Converts uploaded files to UploadedFile instances.
+     *
+     * @param array|UploadedFile $file A (multi-dimensional) array of uploaded file information
+     *
+     * @return UploadedFile|UploadedFile[] A (multi-dimensional) array of UploadedFile instances
+     */
+    protected function convertFileInformation($file)
     {
-        return $this->type;
+        if ($file instanceof UploadedFile) {
+            return $file;
+        }
+
+        $file = $this->fixPhpFilesArray($file);
+        if (is_array($file)) {
+            $keys = array_keys($file);
+            sort($keys);
+
+            if ($keys == self::$fileKeys) {
+                if (UPLOAD_ERR_NO_FILE == $file['error']) {
+                    $file = null;
+                } else {
+                    $file = new UploadedFile($file['tmp_name'], $file['name'], $file['type'], $file['size'], $file['error']);
+                }
+            } else {
+                $file = array_map(array($this, 'convertFileInformation'), $file);
+            }
+        }
+
+        return $file;
     }
 
-    public function getTmpName()
+    /**
+     * Fixes a malformed PHP $_FILES array.
+     *
+     * PHP has a bug that the format of the $_FILES array differs, depending on
+     * whether the uploaded file fields had normal field names or array-like
+     * field names ("normal" vs. "parent[child]").
+     *
+     * This method fixes the array to look like the "normal" $_FILES array.
+     *
+     * It's safe to pass an already converted array, in which case this method
+     * just returns the original array unmodified.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function fixPhpFilesArray($data)
     {
-        return $this->tmpName;
-    }
+        if (!is_array($data)) {
+            return $data;
+        }
 
-    public function getError()
-    {
-        return $this->error;
-    }
+        $keys = array_keys($data);
+        sort($keys);
 
-    public function getSize()
-    {
-        return $this->size;
-    }
+        if (self::$fileKeys != $keys || !isset($data['name']) || !is_array($data['name'])) {
+            return $data;
+        }
 
-    public function valid()
-    {
-        return null !== $this->error && 0 == $this->error;
+        $files = $data;
+        foreach (self::$fileKeys as $k) {
+            unset($files[$k]);
+        }
+
+        foreach ($data['name'] as $key => $name) {
+            $files[$key] = $this->fixPhpFilesArray(array(
+                'error' => $data['error'][$key],
+                'name' => $name,
+                'type' => $data['type'][$key],
+                'tmp_name' => $data['tmp_name'][$key],
+                'size' => $data['size'][$key],
+            ));
+        }
+
+        return $files;
     }
 }

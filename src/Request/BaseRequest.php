@@ -115,7 +115,7 @@ class BaseRequest
     /**
      * Uploaded files ($_FILES).
      *
-     * @var array
+     * @var ParameterBag
      */
     public $files;
 
@@ -436,7 +436,7 @@ class BaseRequest
             $dup->cookies = new ParameterBag($cookies);
         }
         if ($files !== null) {
-            //$dup->files = new FileBag($files);
+            $dup->files = new FileBag($files);
         }
         if ($server !== null) {
             $dup->server = new ServerBag($server);
@@ -476,7 +476,7 @@ class BaseRequest
         $this->request = clone $this->request;
         $this->attributes = clone $this->attributes;
         $this->cookies = clone $this->cookies;
-        //$this->files = clone $this->files;
+        $this->files = clone $this->files;
         $this->server = clone $this->server;
         $this->headers = clone $this->headers;
     }
