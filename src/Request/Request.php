@@ -54,11 +54,14 @@ class Request extends BaseRequest implements Arrayable, RequestContract
             $data = [];
             if ($request->isJson()) {
                 $data = json_decode($request->content, true, 512, JSON_BIGINT_AS_STRING);
+                if (!is_array($data)) {
+                    $data = [];
+                }
                 $request->json = new ParameterBag($data);
             } elseif (0 === strpos($contentType, 'application/x-www-form-urlencoded')) {
                 parse_str($request->content, $data);
             }
-            if ($data) {
+            if (is_array($data)) {
                 $request->request = new ParameterBag($data);
             }
         }
