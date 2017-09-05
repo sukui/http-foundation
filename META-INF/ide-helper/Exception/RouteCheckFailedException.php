@@ -2,7 +2,7 @@
 
 namespace Zan\Framework\Network\Http\Exception;
 
-use Zan\Framework\Foundation\Exception\ZanException;
+use ZanPHP\Exception\ZanException;
 
 class RouteCheckFailedException extends ZanException
 {

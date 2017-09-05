@@ -1,168 +1,73 @@
 <?php
 
-/*
- * This file is part of the Symfony package.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Zan\Framework\Network\Http\Request\AcceptHeader;
 
-/**
- * Represents an Accept-* header item.
- *
- * @author Jean-François Simon <contact@jfsimon.fr>
- */
 class AcceptHeaderItem
 {
+    private $AcceptHeaderItem;
 
-    /**
-     * Constructor.
-     *
-     * @param string $value
-     * @param array  $attributes
-     */
     public function __construct($value, array $attributes = array())
     {
-
+        $this->AcceptHeaderItem  = new \ZanPHP\HttpFoundation\Request\AcceptHeader\AcceptHeaderItem($value,$attributes);
     }
 
-    /**
-     * Builds an AcceptHeaderInstance instance from a string.
-     *
-     * @param string $itemValue
-     *
-     * @return AcceptHeaderItem
-     */
     public static function fromString($itemValue)
     {
-
+        \ZanPHP\HttpFoundation\Request\AcceptHeader\AcceptHeaderItem::fromString($itemValue);
     }
 
-    /**
-     * Returns header  value's string representation.
-     *
-     * @return string
-     */
     public function __toString()
     {
-
+        return $this->AcceptHeaderItem->__toString();
     }
 
-    /**
-     * Set the item value.
-     *
-     * @param string $value
-     *
-     * @return AcceptHeaderItem
-     */
     public function setValue($value)
     {
-
+        $this->AcceptHeaderItem->setValue($value);
     }
 
-    /**
-     * Returns the item value.
-     *
-     * @return string
-     */
     public function getValue()
     {
-
+        $this->AcceptHeaderItem->getValue();
     }
 
-    /**
-     * Set the item quality.
-     *
-     * @param float $quality
-     *
-     * @return AcceptHeaderItem
-     */
     public function setQuality($quality)
     {
-
+        $this->AcceptHeaderItem->setQuality($quality);
     }
 
-    /**
-     * Returns the item quality.
-     *
-     * @return float
-     */
     public function getQuality()
     {
-
+        $this->AcceptHeaderItem->getQuality();
     }
 
-    /**
-     * Set the item index.
-     *
-     * @param int $index
-     *
-     * @return AcceptHeaderItem
-     */
     public function setIndex($index)
     {
-
+        $this->AcceptHeaderItem->setIndex($index);
     }
 
-    /**
-     * Returns the item index.
-     *
-     * @return int
-     */
     public function getIndex()
     {
-
+        $this->AcceptHeaderItem->getIndex();
     }
 
-    /**
-     * Tests if an attribute exists.
-     *
-     * @param string $name
-     *
-     * @return bool
-     */
     public function hasAttribute($name)
     {
-
+        $this->AcceptHeaderItem->hasAttribute($name);
     }
 
-    /**
-     * Returns an attribute by its name.
-     *
-     * @param string $name
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
     public function getAttribute($name, $default = null)
     {
-
+        $this->AcceptHeaderItem->getAttribute($name, $default);
     }
 
-    /**
-     * Returns all attributes.
-     *
-     * @return array
-     */
     public function getAttributes()
     {
-
+        $this->AcceptHeaderItem->getAttributes();
     }
 
-    /**
-     * Set an attribute.
-     *
-     * @param string $name
-     * @param string $value
-     *
-     * @return AcceptHeaderItem
-     */
     public function setAttribute($name, $value)
     {
-
+        $this->AcceptHeaderItem->setAttribute($name, $value);
     }
 }
