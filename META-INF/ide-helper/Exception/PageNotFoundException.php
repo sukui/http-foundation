@@ -2,8 +2,7 @@
 
 namespace Zan\Framework\Network\Http\Exception;
 
-
-use Zan\Framework\Foundation\Exception\BusinessException;
+use ZanPHP\Exception\BusinessException;
 
 class PageNotFoundException extends BusinessException
 {
