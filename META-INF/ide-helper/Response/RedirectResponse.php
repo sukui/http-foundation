@@ -2,7 +2,8 @@
 
 namespace Zan\Framework\Network\Http\Response;
 
-use Zan\Framework\Contract\Network\Response as ResponseContract;
+use ZanPHP\Contracts\Http\ResponseTrait;
+use ZanPHP\Contracts\Network\Response as ResponseContract;
 
 class RedirectResponse extends BaseRedirectResponse implements ResponseContract
 {

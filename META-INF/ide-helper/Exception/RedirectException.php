@@ -2,32 +2,26 @@
 
 namespace Zan\Framework\Network\Http\Exception;
 
-
-use Zan\Framework\Foundation\Exception\BusinessException;
+use ZanPHP\Exception\BusinessException;
 
 class RedirectException extends BusinessException
 {
-    public $redirectUrl;
+    private $RedirectException;
 
     public function __construct($url, $message)
     {
-
+        parent::__construct($message);
+        $this->RedirectException = new \ZanPHP\HttpFoundation\Exception\RedirectException($url, $message);
     }
 
-    /**
-     * @return mixed
-     */
     public function getRedirectUrl()
     {
-
+        $this->RedirectException->getRedirectUrl();
     }
 
-    /**
-     * @param mixed $redirectUrl
-     */
     public function setRedirectUrl($redirectUrl)
     {
-
+        $this->RedirectException->setRedirectUrl($redirectUrl);
     }
 
 

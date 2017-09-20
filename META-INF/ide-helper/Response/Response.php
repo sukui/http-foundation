@@ -2,65 +2,35 @@
 
 namespace Zan\Framework\Network\Http\Response;
 
-use Exception;
-use ArrayObject;
-use JsonSerializable;
-use Zan\Framework\Contract\Foundation\Jsonable;
-use Zan\Framework\Contract\Network\Response as ResponseContract;
-use Zan\Framework\Utilities\Types\Json;
+use ZanPHP\Contracts\Network\Response as ResponseContract;
 
 class Response extends BaseResponse implements ResponseContract
 {
-    use ResponseTrait;
+    private $Response;
 
-    /**
-     * The original content of the response.
-     *
-     * @var mixed
-     */
-    public $original;
+    public function __construct()
+    {
+        parent::__construct();
+        $this->Response = new \ZanPHP\HttpFoundation\Response\Response($content);
+    }
 
-    /**
-     * The exception that triggered the error response (if applicable).
-     *
-     * @var \Exception
-     */
-    public $exception;
-
-    /**
-     * Set the content on the response.
-     *
-     * @param  mixed  $content
-     * @return $this
-     */
     public function setContent($content)
     {
-
+        $this->Response->setContent($content);
     }
 
-    /**
-     * Get the original response content.
-     *
-     * @return mixed
-     */
     public function getOriginalContent()
     {
-
+        $this->Response->getOriginalContent();
     }
 
-    /**
-     * Set the exception to attach to the response.
-     *
-     * @param  \Exception  $e
-     * @return $this
-     */
-    public function withException(Exception $e)
+    public function withException(\Exception $e)
     {
-
+        $this->Response->withException($e);
     }
 
     public function getException()
     {
-
+        $this->Response->getException();
     }
 }

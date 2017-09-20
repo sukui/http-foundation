@@ -2,75 +2,40 @@
 
 namespace Zan\Framework\Network\Http\Response;
 
-use JsonSerializable;
-use InvalidArgumentException;
-use Zan\Framework\Contract\Foundation\Jsonable;
-use Zan\Framework\Contract\Foundation\Arrayable;
-use Zan\Framework\Contract\Network\Response as ResponseContract;
+use ZanPHP\Contracts\Network\Response as ResponseContract;
 
 class JsonResponse extends BaseJsonResponse implements ResponseContract
 {
-    use ResponseTrait;
+    private $JsonResponse;
 
-    /**
-     * Constructor.
-     *
-     * @param  mixed  $data
-     * @param  int    $status
-     * @param  array  $headers
-     * @param  int    $options
-     */
     public function __construct($data = null, $status = 200, $headers = [], $options = 0)
     {
-
+        parent::__construct();
+        $this->JsonResponse = new \ZanPHP\HttpFoundation\Response\JsonResponse($data, $status, $headers, $options);
     }
 
-    /**
-     * Get the json_decoded data from the response.
-     *
-     * @param  bool  $assoc
-     * @param  int   $depth
-     * @return mixed
-     */
     public function getData($assoc = false, $depth = 512)
     {
-
+        $this->JsonResponse->getData($assoc, $depth);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setData($data = [])
     {
-
+        $this->JsonResponse->setData($data);
     }
 
-    /**
-     * Get the JSON encoding options.
-     *
-     * @return int
-     */
     public function getJsonOptions()
     {
-
+        $this->JsonResponse->getJsonOptions();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setEncodingOptions($encodingOptions)
     {
-
+        $this->JsonResponse->setEncodingOptions($encodingOptions);
     }
 
-    /**
-     * Set the JSON encoding options.
-     *
-     * @param  int  $options
-     * @return mixed
-     */
     public function setJsonOptions($options)
     {
-
+        $this->JsonResponse->setJsonOptions($options);
     }
 }

@@ -1,129 +1,58 @@
 <?php
 
-/*
- * This file is part of the Symfony package.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Zan\Framework\Network\Http\Response;
 
-/**
- * Represents a cookie.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
- */
 class Cookie
 {
+    private $Cookie;
 
-    /**
-     * Constructor.
-     *
-     * @param string                                  $name     The name of the cookie
-     * @param string                                  $value    The value of the cookie
-     * @param int|string|\DateTime|\DateTimeInterface $expire   The time the cookie expires
-     * @param string                                  $path     The path on the server in which the cookie will be available on
-     * @param string                                  $domain   The domain that the cookie is available to
-     * @param bool                                    $secure   Whether the cookie should only be transmitted over a secure HTTPS connection from the client
-     * @param bool                                    $httpOnly Whether the cookie will be made accessible only through the HTTP protocol
-     *
-     * @throws \InvalidArgumentException
-     */
     public function __construct($name, $value = null, $expire = 0, $path = '/', $domain = null, $secure = false, $httpOnly = true)
     {
-
+        $this->Cookie = new \ZanPHP\HttpFoundation\Response\Cookie($name, $value, $expire, $path, $domain, $secure, $httpOnly);
     }
 
-    /**
-     * Returns the cookie as a string.
-     *
-     * @return string The cookie
-     */
     public function __toString()
     {
-
+        return $this->Cookie->__toString();
     }
 
-    /**
-     * Gets the name of the cookie.
-     *
-     * @return string
-     */
     public function getName()
     {
-
+        $this->Cookie->getName();
     }
 
-    /**
-     * Gets the value of the cookie.
-     *
-     * @return string
-     */
     public function getValue()
     {
-
+        $this->Cookie->getValue();
     }
 
-    /**
-     * Gets the domain that the cookie is available to.
-     *
-     * @return string
-     */
     public function getDomain()
     {
-
+        $this->Cookie->getDomain();
     }
 
-    /**
-     * Gets the time the cookie expires.
-     *
-     * @return int
-     */
     public function getExpiresTime()
     {
-
+        $this->Cookie->getExpiresTime();
     }
 
-    /**
-     * Gets the path on the server in which the cookie will be available on.
-     *
-     * @return string
-     */
     public function getPath()
     {
-
+        $this->Cookie->getPath();
     }
 
-    /**
-     * Checks whether the cookie should only be transmitted over a secure HTTPS connection from the client.
-     *
-     * @return bool
-     */
     public function isSecure()
     {
-
+        $this->Cookie->isSecure();
     }
 
-    /**
-     * Checks whether the cookie will be made accessible only through the HTTP protocol.
-     *
-     * @return bool
-     */
     public function isHttpOnly()
     {
-
+        $this->Cookie->isHttpOnly();
     }
 
-    /**
-     * Whether this cookie is about to be cleared.
-     *
-     * @return bool
-     */
     public function isCleared()
     {
-
+        $this->Cookie->isCleared();
     }
 }

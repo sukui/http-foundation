@@ -3,38 +3,35 @@ namespace Zan\Framework\Network\Http\Bag;
 
 class FileBag
 {
+    private $FileBag;
+
     public function __construct(array $files = array())
     {
-
+        $this->FileBag = new \ZanPHP\HttpFoundation\Bag\FileBag($files);
     }
 
-    public function getName()
+    public function replace(array $files = array())
     {
-
+        $this->FileBag->replace($files);
     }
 
-    public function getType()
+    public function set($key, $value)
     {
-
+        $this->FileBag->set($key, $value);
     }
 
-    public function getTmpName()
+    public function add(array $files = array())
     {
-
+        $this->FileBag->add($files);
     }
 
-    public function getError()
+    protected function convertFileInformation($file)
     {
-
+        $this->FileBag->convertFileInformation($file);
     }
 
-    public function getSize()
+    protected function fixPhpFilesArray($data)
     {
-
-    }
-
-    public function valid()
-    {
-
+        $this->FileBag->fixPhpFilesArray($data);
     }
 }
