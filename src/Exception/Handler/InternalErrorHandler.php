@@ -4,6 +4,7 @@ namespace ZanPHP\HttpFoundation\Exception\Handler;
 
 use ZanPHP\Contracts\Config\Repository;
 use ZanPHP\Contracts\Foundation\ExceptionHandler;
+use ZanPHP\Exception\BusinessException;
 use ZanPHP\HttpFoundation\Response\BaseResponse;
 use ZanPHP\HttpFoundation\Response\RedirectResponse;
 use ZanPHP\HttpFoundation\Response\Response;
@@ -34,7 +35,8 @@ class InternalErrorHandler implements ExceptionHandler
                     return new Response($errorInfo);
                 } else {
                     $code = $e->getCode();
-                    return new Response("网络错误($code)");
+                    $msg = $e instanceof BusinessException ? $e->getMessage() : '网络错误';
+                    return new Response("{$msg}({$code})");
                 }
             }
             // 跳转到配置的500页面
