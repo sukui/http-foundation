@@ -23,6 +23,6 @@ class PageNotFoundHandler implements ExceptionHandler
             return false;
         }
         // 跳转到配置的404页面
-        return RedirectResponse::create($config['404'], BaseResponse::HTTP_FOUND);
+        return RedirectResponse::create($config['404'], BaseResponse::HTTP_NOT_FOUND);
     }
 }
