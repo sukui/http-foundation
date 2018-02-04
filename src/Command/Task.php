@@ -17,6 +17,17 @@ function getCookieHandler()
     });
 }
 
+function getClientIp()
+{
+    return new SysCall(function (Task $task) {
+        $context = $task->getContext();
+        $request = $context->get('request');
+        $client_ip = $request->getClientIp();
+        $task->send($client_ip);
+        return Signal::TASK_CONTINUE;
+    });
+}
+
 function cookieGet($key, $default = null)
 {
     return new SysCall(function (Task $task) use ($key, $default) {
