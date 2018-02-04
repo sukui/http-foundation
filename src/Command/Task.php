@@ -76,3 +76,25 @@ function getServerHandler()
         return Signal::TASK_CONTINUE;
     });
 }
+
+function requestGet($key='')
+{
+    return new SysCall(function (Task $task)use($key) {
+        $context = $task->getContext();
+        $request = $context->get('request');
+        $value = $key ==''?$request->get():$request->get($key,'');
+        $task->send($value);
+        return Signal::TASK_CONTINUE;
+    });
+}
+
+function requestPost($key='')
+{
+    return new SysCall(function (Task $task)use($key) {
+        $context = $task->getContext();
+        $request = $context->get('request');
+        $value = $key ==''?$request->post():$request->post($key,'');
+        $task->send($value);
+        return Signal::TASK_CONTINUE;
+    });
+}
