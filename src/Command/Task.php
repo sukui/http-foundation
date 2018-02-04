@@ -98,3 +98,23 @@ function requestPost($key='')
         return Signal::TASK_CONTINUE;
     });
 }
+
+function requestMethod(){
+    return new SysCall(function (Task $task) {
+        $context = $task->getContext();
+        $request = $context->get('request');
+        $method = $request->getRealMethod();
+        $task->send($method);
+        return Signal::TASK_CONTINUE;
+    });
+}
+
+function requestContent(){
+    return new SysCall(function (Task $task) {
+        $context = $task->getContext();
+        $request = $context->get('request');
+        $content = $request->getContent();
+        $task->send($content);
+        return Signal::TASK_CONTINUE;
+    });
+}
