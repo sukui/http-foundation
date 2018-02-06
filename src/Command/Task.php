@@ -66,6 +66,38 @@ function getSessionHandler()
     });
 }
 
+
+function sessionGet($key=null)
+{
+    return new SysCall(function (Task $task) use ($key) {
+        $context = $task->getContext();
+        $session = $context->get('session');
+        if($session){
+            $value = $session->get($key);
+        }else{
+            $value = null;
+        }
+        $task->send($value);
+
+        return Signal::TASK_CONTINUE;
+    });
+}
+
+function sessionSet($key, $value)
+{
+    return new SysCall(function (Task $task) use ($key,$value) {
+        $context = $task->getContext();
+        $session = $context->get('session');
+        if($session){
+            $ret = $session->set($key);
+        }else{
+            $ret = false;
+        }
+        $task->send($ret);
+        return Signal::TASK_CONTINUE;
+    });
+}
+
 function getServerHandler()
 {
     return new SysCall(function (Task $task) {
