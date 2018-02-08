@@ -89,7 +89,7 @@ function sessionSet($key, $value)
         $context = $task->getContext();
         $session = $context->get('session');
         if($session){
-            $ret = $session->set($key);
+            $ret = $session->set($key,$value);
         }else{
             $ret = false;
         }
