@@ -222,17 +222,11 @@ class UploadedFile extends File
             }
 
             $target = $this->getTargetFile($directory, $name);
+            $targetPath = $target->getPathname();
 
-            /*
-            if (!@move_uploaded_file($this->getPathname(), $target)) {
-                $error = error_get_last();
-                throw new FileException(sprintf('Could not move the file "%s" to "%s" (%s)', $this->getPathname(), $target, strip_tags($error['message'])));
-            }
-            */
+            yield $this->move_upload_file($this->getPathname(), $targetPath);
 
-            yield $this->move_upload_file($this->getPathname(), $target);
-
-            @chmod($target, 0666 & ~umask());
+            @chmod($targetPath, 0666 & ~umask());
 
             yield $target;
             return;
@@ -298,46 +292,65 @@ class UploadedFile extends File
     }
 
     /**
-     * 异步复制文件
-     * @param $src
-     * @param $dst
+     * 异步复制文件（Swoole 1.8.5 异步回调方式）
+     * @param string $src 源文件路径
+     * @param string $dst 目标文件路径
      */
     private function move_upload_file($src, $dst)
     {
         return callcc(function(callable $resolve, $task) use($src, $dst) {
+            $fileSize = @filesize($src);
+            if ($fileSize === false || $fileSize === 0) {
+                // 空文件或无法读取，直接创建空文件
+                @file_put_contents($dst, '');
+                $resolve(true);
+                return;
+            }
             $chunk = 1024 * 1024;
             $offset = 0;
-            $fileSize = filesize($src);
             $n = (int)ceil($fileSize / $chunk);
             $stopped = false;
 
-            $r = swoole_async_read($src, function($_, $content) use($src, $dst, $resolve, &$offset, &$n, &$stopped) {
-                $readSize = strlen($content);
-                $continue = ($readSize !== 0) && !$stopped;
-
-                if ($continue) {
-                    $r = swoole_async_write($dst, $content, $offset, function($_, $writeSize) use($resolve, $offset, $readSize, &$n, &$stopped) {
-                        // assert($readSize === $writeSize); // 分块全部写入
-                        if (--$n === 0) {
-                            $stopped = true;
-                            $resolve(null);
-                        }
-                    });
-
-                    if (!$r) {
-                        if (!$stopped) {
-                            $resolve(null, new FileException("Failed to write $src"));
-                            $stopped = true;
-                        }
-                    }
+            $r = swoole_async_read($src, function($filename, $content) use($src, $dst, $resolve, &$offset, &$n, &$stopped) {
+                if ($stopped) {
+                    return false;
                 }
+                $readSize = strlen($content);
+                if ($readSize === 0) {
+                    if (!$stopped) {
+                        $stopped = true;
+                        $resolve(true);
+                    }
+                    return false;
+                }
+
+                $writeOffset = $offset;
                 $offset += $readSize;
-                return $continue ;
+
+                $r = swoole_async_write($dst, $content, $writeOffset, function($filename, $writeSize) use($resolve, $readSize, &$n, &$stopped) {
+                    if ($stopped) {
+                        return;
+                    }
+                    if (--$n === 0) {
+                        $stopped = true;
+                        $resolve(true);
+                    }
+                });
+
+                if (!$r) {
+                    if (!$stopped) {
+                        $stopped = true;
+                        $resolve(true, new FileException("Failed to write $dst"));
+                    }
+                    return false;
+                }
+
+                return true;
             });
 
             if (!$r) {
                 $stopped = true;
-                $resolve(null, new FileException("Failed to read $src"));
+                $resolve(true, new FileException("Failed to read $src"));
             }
         });
     }
